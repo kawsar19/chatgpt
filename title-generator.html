@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Title generator</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+</head>
+
+<body>
+
+
+  <div class="container">
+    <div class="header">
+      <span onclick="wlhistory.back()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" fill="none" viewBox="0 0 24 24" stroke-width="2.8" stroke="#0695FF" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+
+
+      </span>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnqM2fDreW6zz_yGhFN-4K5AT_VkVf5Q20yg&usqp=CAU" alt="" class="avatar">
+      <h3>ব্লগ টাইটেল তৈরি</h3>
+
+      <div class="icons">
+        <span onclick="showInfo()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" height="20" width="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="#0695FF" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+
+
+        </span>
+
+        <span onclick="showCopy()">
+
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0695FF" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+          </svg>
+
+        </span>
+
+
+
+      </div>
+
+    </div>
+    <div id="chat" class="chat">
+      <p>Today</p>
+
+    </div>
+
+    <button id="sendBtn" class="btn">
+
+      <textarea id="txtMsg"></textarea>
+      <span class="send" onclick="sendFun()">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0695FF" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+          </svg>
+
+        </span>
+      </span>
+
+    </button>
+
+  </div>
+
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+
+  <script>
+    // Define constants
+    const OPENAI_API_KEY = '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';
+
+    // Get DOM elements
+    const chat = document.getElementById('chat');
+    const sQuestion = document.getElementById('txtMsg');
+
+
+    // Define context
+    let context = '';
+
+    // Define functions
+    function sendFun() {
+      // Check if question is empty
+      if (sQuestion.value === '') {
+        alert('Type in your question!');
+        sQuestion.focus();
+        return;
+      }
+
+      // Create message elements
+      const responseDiv = document.createElement('div');
+      responseDiv.classList.add('message', 'response');
+      responseDiv.textContent = sQuestion.value;
+
+      const questionDiv = document.createElement('div');
+      questionDiv.classList.add('message', 'question');
+      questionDiv.innerHTML = `
+    <div id="wave">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  `;
+
+      // Add message elements to chat
+      chat.appendChild(responseDiv);
+      chat.appendChild(questionDiv);
+
+      // Make API request to OpenAI
+
+      let str = sQuestion.value
+
+      let newStr = `
+I want you to act as a title generator for written pieces. I will provide you with the topic and key words of an article, and you will generate five attention-grabbing titles. Please keep the title concise and under 20 words, and ensure that the meaning is maintained. Replies will utilize the language type of the topic. My first topic is "${str}"
+  `
+
+
+      const data = {
+        prompt: newStr,
+        model: 'text-davinci-003',
+        temperature: 0.5,
+        max_tokens: 2048
+
+
+      };
+
+      fetch('https://api.openai.com/v1/completions', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${OPENAI_API_KEY}`
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Update joke message with response from OpenAI
+          questionDiv.textContent = data.choices[0].text;
+
+          // Scroll to bottom of chat
+          scrollToBottom(chat);
+
+          // Update context with response from OpenAI
+          const lastDiv = document.querySelector('.question:last-child');
+
+          console.log(lastDiv)
+
+        })
+        .catch(error => {
+          console.log(error);
+        });
+
+      // Clear input field
+      sQuestion.value = '';
+
+
+
+
+    }
+
+    function scrollToBottom(element) {
+      element.scroll({
+        top: element.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+
+    // Attach event listeners
+    sQuestion.addEventListener('focus', () => {
+      scrollToBottom(chat);
+    });
+
+
+    function showInfo() {
+      Toastify({
+        text: `যে বিষয়ে টাইটেল তৈরি করতে চান সেই রিলেটেড দু,একটি শব্দ লিখুন 
+        যেমন : importance of english ,  অথবা কমা দিয়ে কয়েকটি কিওয়ার্ডও দিতে পারেন। 
+        `,
+        duration: 5000,
+        
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "center", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "linear-gradient(to right, #00b09b, #96c93d)",
+        },
+        onClick: function() {} // Callback after click
+      }).showToast();
+    }
+
+
+    function showCopy() {
+
+      try {
+        // Your code here
+        const lastDiv = document.querySelector('.question:last-child');
+        const textToCopy = lastDiv.innerText;
+        navigator.clipboard.writeText(textToCopy)
+          .then(() => 
+          {
+          Toastify({
+            text: "সফলভাবে কপি হয়েছে",
+            duration: 3000,
+              
+              close: true,
+              gravity: "top", // `top` or `bottom`
+              position: "center", // `left`, `center` or `right`
+              stopOnFocus: true,
+              style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)",
+              },
+          
+          }).showToast();
+          
+          }
+          )
+          
+          
+          .catch((error) => 
+          {
+            Toastify({
+              text: error,
+              duration: 3000,
+          
+              close: true,
+              gravity: "top", // `top` or `bottom`
+              position: "center", // `left`, `center` or `right`
+              stopOnFocus: true,
+              style: {
+                background: "linear-gradient(to right, red, crimson)",
+              },
+          
+            }).showToast();
+          
+          }
+          
+          );
+      
+    } catch (error) {
+      Toastify({
+        text:error, 
+        duration: 2000,
+        
+       
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "center", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "linear-gradient(to right, red, crimson)",
+        },
+        onClick: function() {} // Callback after click
+      }).showToast();
+    }
+    }
+  </script>
+</body>
+
+</html>
